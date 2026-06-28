@@ -1,10 +1,15 @@
 import { useState } from 'react';
-
-const categories = ["food", "housing", "utilities", "transport", "entertainment", "salary", "other"];
+import { CATEGORIES } from './constants';
 
 function TransactionList({ transactions, onDeleteTransaction }) {
   const [filterType, setFilterType] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this transaction?")) {
+      onDeleteTransaction(id);
+    }
+  };
 
   let filteredTransactions = transactions;
   if (filterType !== "all") {
@@ -25,7 +30,7 @@ function TransactionList({ transactions, onDeleteTransaction }) {
         </select>
         <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
           <option value="all">All Categories</option>
-          {categories.map(cat => (
+          {CATEGORIES.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
@@ -51,11 +56,7 @@ function TransactionList({ transactions, onDeleteTransaction }) {
                 {t.type === "income" ? "+" : "-"}${t.amount}
               </td>
               <td>
-                <button onClick={() => {
-                  if (window.confirm("Are you sure you want to delete this transaction?")) {
-                    onDeleteTransaction(t.id);
-                  }
-                }}>Delete</button>
+                <button className="delete-btn" onClick={() => handleDelete(t.id)}>Delete</button>
               </td>
             </tr>
           ))}
