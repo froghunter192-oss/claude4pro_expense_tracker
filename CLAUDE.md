@@ -20,14 +20,18 @@ There is no test runner configured — `package.json` has no `test` script and n
 
 ## Architecture
 
-Single-page React 19 app bootstrapped by Vite. The entire application is one component: **`src/App.jsx`**. There is no router, no state library, no backend, and no persistence — all state is `useState` in `App`, so data resets on reload.
+Single-page React 19 app bootstrapped by Vite. There is no router, no state library, no backend, and no persistence — data lives in `useState` and resets on reload.
 
-Data flow in `App`:
-- `transactions` is the source of truth (seeded with hardcoded sample data). Each transaction is `{ id, description, amount, type, category, date }` where `type` is `"income"` or `"expense"`.
-- Derived values (`totalIncome`, `totalExpenses`, `balance`, `filteredTransactions`) are computed inline on every render from `transactions` plus the filter state — there is no memoization.
-- The add-transaction form and the type/category filters each have their own `useState` fields; `handleSubmit` appends a new transaction and resets the form.
+**`src/App.jsx`** is the container. It owns the single source of truth — `transactions` (seeded with hardcoded sample data) — and an `addTransaction` handler, then composes three child components. A transaction is `{ id, description, amount, type, category, date }` where `type` is `"income"` or `"expense"` and `amount` is a **number**.
 
-Note that `amount` is stored as a **string** (both in seed data and from the number input), which matters for any arithmetic over transactions.
+Child components (each in its own file under `src/`, presentational/self-contained):
+- **`Summary.jsx`** — receives `transactions`, computes `totalIncome`, `totalExpenses`, and `balance` internally (each render, no memoization), and renders the summary cards.
+- **`TransactionForm.jsx`** — owns its own form input state (`description`, `amount`, `type`, `category`), and on submit calls the `onAddTransaction(transaction)` prop with a fully-built transaction (coercing `amount` via `Number()`), then resets its fields. It does not touch `transactions` directly.
+- **`TransactionList.jsx`** — receives `transactions`, owns the filter state (`filterType`, `filterCategory`), derives the filtered list inline, and renders the filter dropdowns + table.
+
+Because state is pushed down, adding a transaction flows: `TransactionForm` → `onAddTransaction` → `App` updates `transactions` → `Summary` and `TransactionList` re-render from the new prop.
+
+The `categories` constant is currently duplicated in `TransactionForm.jsx` and `TransactionList.jsx` (no shared module yet).
 
 Entry point: `src/main.jsx` mounts `<App />` under React `StrictMode` into `#root` (`index.html`). Styling is plain CSS in `src/App.css` and `src/index.css` (no CSS framework).
 
