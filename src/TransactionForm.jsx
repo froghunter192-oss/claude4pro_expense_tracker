@@ -1,6 +1,5 @@
 import { useState } from 'react'
-
-const categories = ["food", "housing", "utilities", "transport", "entertainment", "salary", "other"];
+import { CATEGORIES } from './categories.js'
 
 function TransactionForm({ onAddTransaction }) {
   const [description, setDescription] = useState("");
@@ -28,33 +27,78 @@ function TransactionForm({ onAddTransaction }) {
   };
 
   return (
-    <div className="add-transaction">
-      <h2>Add Transaction</h2>
+    <section className="card add-transaction">
+      <h2 className="card__title">
+        <span className="material-symbols-outlined">add_circle</span>
+        Add transaction
+      </h2>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
-        <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-        <button type="submit">Add</button>
+        <div className="field field--desc">
+          <label htmlFor="tx-description">Description</label>
+          <input
+            id="tx-description"
+            type="text"
+            placeholder="e.g. Coffee with a client"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+
+        <div className="field field--amount">
+          <label htmlFor="tx-amount">Amount</label>
+          <div className="input-affix">
+            <span>$</span>
+            <input
+              id="tx-amount"
+              type="number"
+              placeholder="0"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="field field--category">
+          <label htmlFor="tx-category">Category</label>
+          <select
+            id="tx-category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            {CATEGORIES.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="field field--type">
+          <label>Type</label>
+          <div className="segmented" role="group" aria-label="Transaction type">
+            <button
+              type="button"
+              className={type === "expense" ? "active" : ""}
+              aria-pressed={type === "expense"}
+              onClick={() => setType("expense")}
+            >
+              Expense
+            </button>
+            <button
+              type="button"
+              className={type === "income" ? "active" : ""}
+              aria-pressed={type === "income"}
+              onClick={() => setType("income")}
+            >
+              Income
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" className="btn btn--filled">
+          <span className="material-symbols-outlined">add</span>
+          Add transaction
+        </button>
       </form>
-    </div>
+    </section>
   );
 }
 

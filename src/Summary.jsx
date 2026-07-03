@@ -1,3 +1,5 @@
+import { formatCurrency } from './format.js'
+
 function Summary({ transactions }) {
   const totalIncome = transactions
     .filter(t => t.type === "income")
@@ -10,20 +12,42 @@ function Summary({ transactions }) {
   const balance = totalIncome - totalExpenses;
 
   return (
-    <div className="summary">
-      <div className="summary-card">
-        <h3>Income</h3>
-        <p className="income-amount">${totalIncome}</p>
+    <section className="summary">
+      <div className="balance-card">
+        <div className="balance-card__label">
+          <span className="material-symbols-outlined">account_balance_wallet</span>
+          Total balance
+        </div>
+        <p className="balance-card__amount">{formatCurrency(balance)}</p>
+        <p className="balance-card__hint">
+          {balance >= 0
+            ? "You're in the green this period."
+            : "Spending is running ahead of income."}
+        </p>
       </div>
-      <div className="summary-card">
-        <h3>Expenses</h3>
-        <p className="expense-amount">${totalExpenses}</p>
+
+      <div className="stat-grid">
+        <div className="stat-card stat-card--income">
+          <div className="stat-card__icon">
+            <span className="material-symbols-outlined">trending_up</span>
+          </div>
+          <div>
+            <h3>Income</h3>
+            <p className="stat-card__amount income">{formatCurrency(totalIncome)}</p>
+          </div>
+        </div>
+
+        <div className="stat-card stat-card--expense">
+          <div className="stat-card__icon">
+            <span className="material-symbols-outlined">trending_down</span>
+          </div>
+          <div>
+            <h3>Expenses</h3>
+            <p className="stat-card__amount expense">{formatCurrency(totalExpenses)}</p>
+          </div>
+        </div>
       </div>
-      <div className="summary-card">
-        <h3>Balance</h3>
-        <p className="balance-amount">${balance}</p>
-      </div>
-    </div>
+    </section>
   );
 }
 

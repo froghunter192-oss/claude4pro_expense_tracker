@@ -1,6 +1,6 @@
 import { useState } from 'react'
-
-const categories = ["food", "housing", "utilities", "transport", "entertainment", "salary", "other"];
+import { CATEGORIES, CATEGORY_COLORS } from './categories.js'
+import { formatCurrency } from './format.js'
 
 function TransactionList({ transactions, onDeleteTransactions }) {
   const [filterType, setFilterType] = useState("all");
@@ -33,58 +33,89 @@ function TransactionList({ transactions, onDeleteTransactions }) {
   }
 
   return (
-    <div className="transactions">
-      <h2>Transactions</h2>
-      <div className="filters">
-        <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
-          <option value="all">All Types</option>
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
-        <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
-          <option value="all">All Categories</option>
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-        {selectedIds.length > 0 && (
-          <button className="delete-btn" onClick={handleDeleteSelected}>
-            Delete Selected ({selectedIds.length})
-          </button>
-        )}
+    <section className="card transactions">
+      <div className="transactions-head">
+        <h2 className="card__title">
+          <span className="material-symbols-outlined">receipt_long</span>
+          Transactions
+        </h2>
+        <div className="filters">
+          {selectedIds.length > 0 && (
+            <button className="btn btn--delete" onClick={handleDeleteSelected}>
+              <span className="material-symbols-outlined">delete</span>
+              Delete ({selectedIds.length})
+            </button>
+          )}
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            aria-label="Filter by type"
+          >
+            <option value="all">All types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            aria-label="Filter by category"
+          >
+            <option value="all">All categories</option>
+            {CATEGORIES.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredTransactions.map(t => (
-            <tr key={t.id}>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={selectedIds.includes(t.id)}
-                  onChange={() => toggleSelected(t.id)}
-                />
-              </td>
-              <td>{t.date}</td>
-              <td>{t.description}</td>
-              <td>{t.category}</td>
-              <td className={t.type === "income" ? "income-amount" : "expense-amount"}>
-                {t.type === "income" ? "+" : "-"}${t.amount}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      {filteredTransactions.length === 0 ? (
+        <div className="empty-state">
+          <span className="material-symbols-outlined">savings</span>
+          <p>No transactions match these filters yet.</p>
+        </div>
+      ) : (
+        <div className="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th className="col-select"></th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th className="col-amount">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTransactions.map(t => (
+                <tr key={t.id}>
+                  <td className="col-select">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(t.id)}
+                      onChange={() => toggleSelected(t.id)}
+                      aria-label={`Select ${t.description}`}
+                    />
+                  </td>
+                  <td className="col-date">{t.date}</td>
+                  <td className="col-desc">{t.description}</td>
+                  <td>
+                    <span className="chip" style={{ "--chip-color": CATEGORY_COLORS[t.category] }}>
+                      <span className="chip__dot"></span>
+                      {t.category}
+                    </span>
+                  </td>
+                  <td className="col-amount">
+                    <span className={t.type === "income" ? "amount income" : "amount expense"}>
+                      {t.type === "income" ? "+" : "−"}{formatCurrency(t.amount)}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
   );
 }
 

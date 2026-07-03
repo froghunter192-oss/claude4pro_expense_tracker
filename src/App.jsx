@@ -27,13 +27,24 @@ function App() {
 
   return (
     <div className="app">
-      <h1>Finance Tracker</h1>
-      <p className="subtitle">Track your income and expenses</p>
+      <header className="app-bar">
+        <div className="brand">
+          <span className="brand__dots" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+          </span>
+          <div>
+            <h1>Finance Tracker</h1>
+            <p className="subtitle">Track your income and expenses</p>
+          </div>
+        </div>
+      </header>
 
-      <Summary transactions={transactions} />
-      <SpendingChart transactions={transactions} />
-      <TransactionForm onAddTransaction={addTransaction} />
-      <TransactionList transactions={transactions} onDeleteTransactions={deleteTransactions} />
+      <main>
+        <Summary transactions={transactions} />
+        <SpendingChart transactions={transactions} />
+        <TransactionForm onAddTransaction={addTransaction} />
+        <TransactionList transactions={transactions} onDeleteTransactions={deleteTransactions} />
+      </main>
     </div>
   );
 }

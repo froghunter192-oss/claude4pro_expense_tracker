@@ -1,16 +1,6 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-
-// Fixed hue per category so a color always follows the same entity, never its rank.
-// Values are the validated categorical slots from the data-viz reference palette (light surface).
-const CATEGORY_COLORS = {
-  food: "#2a78d6",          // blue
-  housing: "#1baf7a",       // aqua
-  utilities: "#eda100",     // yellow
-  transport: "#008300",     // green
-  entertainment: "#4a3aa7", // violet
-  salary: "#e34948",        // red
-  other: "#e87ba4",         // magenta
-};
+import { CATEGORY_COLORS } from './categories.js'
+import { formatCurrency } from './format.js'
 
 function SpendingChart({ transactions }) {
   const byCategory = transactions
@@ -26,16 +16,22 @@ function SpendingChart({ transactions }) {
 
   if (data.length === 0) {
     return (
-      <div className="spending-chart">
-        <h2>Spending by Category</h2>
+      <section className="card spending-chart">
+        <h2 className="card__title">
+          <span className="material-symbols-outlined">donut_large</span>
+          Spending by category
+        </h2>
         <p className="subtitle">No expenses yet.</p>
-      </div>
+      </section>
     );
   }
 
   return (
-    <div className="spending-chart">
-      <h2>Spending by Category</h2>
+    <section className="card spending-chart">
+      <h2 className="card__title">
+        <span className="material-symbols-outlined">donut_large</span>
+        Spending by category
+      </h2>
       <ResponsiveContainer width="100%" height={280}>
         <PieChart>
           <Pie
@@ -44,8 +40,8 @@ function SpendingChart({ transactions }) {
             nameKey="category"
             cx="50%"
             cy="50%"
-            innerRadius={60}
-            outerRadius={100}
+            innerRadius={64}
+            outerRadius={104}
             paddingAngle={2}
             label={({ category, percent }) => `${category} ${(percent * 100).toFixed(0)}%`}
           >
@@ -53,16 +49,31 @@ function SpendingChart({ transactions }) {
               <Cell
                 key={d.category}
                 fill={CATEGORY_COLORS[d.category] || "#898781"}
-                stroke="#fcfcfb"
+                stroke="#ffffff"
                 strokeWidth={2}
               />
             ))}
           </Pie>
-          <Tooltip formatter={(value) => `$${value}`} />
-          <Legend />
+          <Tooltip
+            formatter={(value) => formatCurrency(value)}
+            contentStyle={{
+              borderRadius: 12,
+              border: 'none',
+              boxShadow: '0 4px 8px 3px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.10)',
+              fontFamily: 'Roboto, sans-serif',
+              fontSize: 13,
+              textTransform: 'capitalize',
+            }}
+          />
+          <Legend
+            iconType="circle"
+            formatter={(value) => (
+              <span style={{ color: '#44474e', fontSize: 13, textTransform: 'capitalize' }}>{value}</span>
+            )}
+          />
         </PieChart>
       </ResponsiveContainer>
-    </div>
+    </section>
   );
 }
 
