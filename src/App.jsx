@@ -20,6 +20,10 @@ function App() {
     setTransactions([...transactions, transaction]);
   };
 
+  const deleteTransactions = (ids) => {
+    setTransactions(transactions.filter(t => !ids.includes(t.id)));
+  };
+
   return (
     <div className="app">
       <h1>Finance Tracker</h1>
@@ -27,7 +31,7 @@ function App() {
 
       <Summary transactions={transactions} />
       <TransactionForm onAddTransaction={addTransaction} />
-      <TransactionList transactions={transactions} />
+      <TransactionList transactions={transactions} onDeleteTransactions={deleteTransactions} />
     </div>
   );
 }
