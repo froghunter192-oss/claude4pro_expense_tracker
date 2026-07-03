@@ -5,14 +5,14 @@ function TransactionForm({ onAddTransaction }) {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("expense");
-  const [category, setCategory] = useState("food");
+  const [category, setCategory] = useState(CATEGORIES[0]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!description || !amount) return;
+    if (!description || Number(amount) <= 0) return;
 
     onAddTransaction({
-      id: Date.now(),
+      id: crypto.randomUUID(),
       description,
       amount: Number(amount),
       type,
@@ -23,7 +23,7 @@ function TransactionForm({ onAddTransaction }) {
     setDescription("");
     setAmount("");
     setType("expense");
-    setCategory("food");
+    setCategory(CATEGORIES[0]);
   };
 
   return (
@@ -51,6 +51,7 @@ function TransactionForm({ onAddTransaction }) {
             <input
               id="tx-amount"
               type="number"
+              min="0"
               placeholder="0"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}

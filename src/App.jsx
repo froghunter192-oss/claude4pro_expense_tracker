@@ -18,11 +18,11 @@ function App() {
   ]);
 
   const addTransaction = (transaction) => {
-    setTransactions([...transactions, transaction]);
+    setTransactions(prev => [...prev, transaction]);
   };
 
   const deleteTransactions = (ids) => {
-    setTransactions(transactions.filter(t => !ids.includes(t.id)));
+    setTransactions(prev => prev.filter(t => !ids.includes(t.id)));
   };
 
   return (
